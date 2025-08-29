@@ -1,0 +1,388 @@
+<!--
+
+
+ЭТО ВСЕ НАПИСАНО ЧАТОМ GPT!
+Я ОТВЕТСТВЕННОСТИ НЕ НЕСУ! :) 
+
+
+-->
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Радужный Текст</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #fff;
+            margin-bottom: 30px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        input[type="text"] {
+            width: 80%;
+            max-width: 500px;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #333;
+            border-radius: 5px;
+            background-color: #222;
+            color: #fff;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #666;
+        }
+
+        .button-section {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        button:disabled {
+            background-color: #222;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        .style-section {
+            margin-top: 15px;
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+        }
+
+        .style-button {
+            width: 40px;
+            height: 40px;
+            font-weight: bold;
+            font-size: 14px;
+            border-radius: 50%;
+            padding: 0;
+        }
+
+        .style-button.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .output {
+            font-size: 20px;
+            white-space: pre;
+            text-align: left;
+            background-color: #232323;
+            margin: 20px auto;
+            min-height: 150px;
+            max-width: 400px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .rainbow-text {
+            display: inline;
+        }
+
+        .red { color: #ff1b1b; }
+        .green { color: #1fda1f; }
+        .yellow { color: #eaea1e; }
+        .blue { color: #0f75db; }
+        .magenta { color: #ff00ff; }
+        .cyan { color: #14dfdf; }
+        
+        .bold { font-weight: bold; }
+        .italic { font-style: italic; }
+        .underline { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌈 Радужный Текст</h1>
+        
+        <div class="input-section">
+            <input type="text" id="textInput" placeholder="Введите текст для создания радужного эффекта..." />
+        </div>
+
+        <div class="button-section">
+            <button id="saveButton" onclick="saveToClipboard()">📋 Скриншот</button>
+        </div>
+        
+        <div class="button-section">
+            <button id="decreaseFont" onclick="changeFontSize(-1)">Шрифт 🔽</button>
+            <button id="increaseFont" onclick="changeFontSize(1)">Шрифт 🔼</button>
+        </div>
+        
+        <div class="style-section">
+            <button id="boldButton" onclick="toggleStyle('bold')" class="style-button">B</button>
+            <button id="italicButton" onclick="toggleStyle('italic')" class="style-button">I</button>
+            <button id="underlineButton" onclick="toggleStyle('underline')" class="style-button">U</button>
+            <button id="caseButton" onclick="toggleCase()" class="style-button">Aa</button>
+        </div>
+
+        <div class="output" id="output"></div>
+    </div>
+
+    <script>
+        // Цвета для радужного эффекта
+        const colors = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan'];
+        const numColors = colors.length;
+        
+        // Переменная для хранения текущего размера шрифта
+        let currentFontSize = 20;
+        
+        // Переменные для отслеживания стилей
+        let isBold = false;
+        let isItalic = false;
+        let isUnderline = false;
+        let caseMode = 'normal'; // 'normal', 'upper', 'lower'
+
+        function generateRainbowText() {
+            const input = document.getElementById('textInput').value;
+            const output = document.getElementById('output');
+            
+            if (!input.trim()) {
+                output.textContent = '';
+                return;
+            }
+
+            // Разбиваем текст на слова
+            const words = input.split(' ');
+            let result = '\n\n\n\n     ';
+            let currentLineLength = 0;
+            let charIndex = 0;
+
+            for (let i = 0; i < words.length; i++) {
+                const word = words[i];
+                const wordLength = word.length;
+                
+                // Проверяем, нужно ли начать новую строку
+                if (currentLineLength + wordLength > 25 && currentLineLength > 0) {
+                    result += '\n     ';
+                    currentLineLength = 0;
+                }
+
+                // Добавляем слово с радужными цветами
+                for (let j = 0; j < word.length; j++) {
+                    const colorIndex = charIndex % numColors;
+                    const colorClass = colors[colorIndex];
+                    let styleClasses = colorClass;
+                    
+                    // Добавляем стили
+                    if (isBold) styleClasses += ' bold';
+                    if (isItalic) styleClasses += ' italic';
+                    if (isUnderline) styleClasses += ' underline';
+                    
+                    // Применяем регистр
+                    let char = word[j];
+                    if (caseMode === 'upper') {
+                        char = char.toUpperCase();
+                    } else if (caseMode === 'lower') {
+                        char = char.toLowerCase();
+                    }
+                    // В режиме 'normal' оставляем оригинальный регистр
+                    
+                    result += `<span class="${styleClasses}">${char}</span>`;
+                    charIndex++;
+                }
+
+                // Добавляем пробел между словами (кроме последнего слова)
+                if (i < words.length - 1) {
+                    const colorIndex = charIndex % numColors;
+                    const colorClass = colors[colorIndex];
+                    let styleClasses = colorClass;
+                    
+                    // Добавляем стили (кроме подчеркивания для пробелов)
+                    if (isBold) styleClasses += ' bold';
+                    if (isItalic) styleClasses += ' italic';
+                    // Подчеркивание не применяется к пробелам
+                    
+                    result += `<span class="${styleClasses}"> </span>`;
+                    charIndex++;
+                    currentLineLength += wordLength + 1;
+                } else {
+                    currentLineLength += wordLength;
+                }
+            }
+
+            result += '\n\n\n\n\n';
+            output.innerHTML = result;
+        }
+
+        // Обработчик ввода в реальном времени
+        document.getElementById('textInput').addEventListener('input', function() {
+            generateRainbowText();
+        });
+
+        // Функция для сохранения в буфер обмена
+        async function saveToClipboard() {
+            const output = document.getElementById('output');
+            const saveButton = document.getElementById('saveButton');
+            
+            // Проверяем, есть ли текст для сохранения
+            if (!output.innerHTML.trim() || output.innerHTML === '\n\n\n\n     \n\n\n\n\n') {
+                alert('Сначала введите текст!');
+                return;
+            }
+            
+            // Отключаем кнопку на время обработки
+            saveButton.disabled = true;
+            saveButton.textContent = '⏳ Обработка...';
+            
+            try {
+                // Создаем скриншот области вывода
+                const canvas = await html2canvas(output, {
+                    backgroundColor: '#232323',
+                    scale: 2, // Увеличиваем качество
+                    useCORS: true,
+                    allowTaint: true
+                });
+                
+                // Конвертируем canvas в blob
+                canvas.toBlob(async function(blob) {
+                    try {
+                        // Копируем в буфер обмена
+                        await navigator.clipboard.write([
+                            new ClipboardItem({
+                                'image/png': blob
+                            })
+                        ]);
+                        
+                        saveButton.textContent = '✅ Скопировано!';
+                        setTimeout(() => {
+                            saveButton.textContent = '📋 Сохранить в буфер обмена';
+                            saveButton.disabled = false;
+                        }, 2000);
+                        
+                    } catch (err) {
+                        console.error('Ошибка при копировании в буфер обмена:', err);
+                        alert('Ошибка при копировании в буфер обмена. Попробуйте еще раз.');
+                        saveButton.textContent = '📋 Сохранить в буфер обмена';
+                        saveButton.disabled = false;
+                    }
+                }, 'image/png');
+                
+            } catch (err) {
+                console.error('Ошибка при создании скриншота:', err);
+                alert('Ошибка при создании скриншота. Попробуйте еще раз.');
+                saveButton.textContent = '📋 Сохранить в буфер обмена';
+                saveButton.disabled = false;
+            }
+        }
+
+        // Функция для изменения размера шрифта
+        function changeFontSize(delta) {
+            const output = document.getElementById('output');
+            const newSize = currentFontSize + delta;
+            
+            // Ограничиваем размер шрифта от 8px до 48px
+            if (newSize >= 8 && newSize <= 48) {
+                currentFontSize = newSize;
+                output.style.fontSize = currentFontSize + 'px';
+                
+                // Показываем текущий размер шрифта на кнопках
+                document.getElementById('decreaseFont').textContent = `🔽 Уменьшить`;
+                document.getElementById('increaseFont').textContent = `🔼 Увеличить`;
+            }
+        }
+
+        // Функция для переключения стилей
+        function toggleStyle(style) {
+            const button = document.getElementById(style + 'Button');
+            
+            switch(style) {
+                case 'bold':
+                    isBold = !isBold;
+                    button.classList.toggle('active', isBold);
+                    break;
+                case 'italic':
+                    isItalic = !isItalic;
+                    button.classList.toggle('active', isItalic);
+                    break;
+                case 'underline':
+                    isUnderline = !isUnderline;
+                    button.classList.toggle('active', isUnderline);
+                    break;
+            }
+            
+            // Перегенерируем текст с новыми стилями
+            generateRainbowText();
+        }
+
+        // Функция для переключения регистра
+        function toggleCase() {
+            const button = document.getElementById('caseButton');
+            
+            // Переключаем режим: normal -> upper -> lower -> normal
+            if (caseMode === 'normal') {
+                caseMode = 'upper';
+                button.textContent = 'AA';
+                button.classList.add('active');
+            } else if (caseMode === 'upper') {
+                caseMode = 'lower';
+                button.textContent = 'aa';
+                button.classList.add('active');
+            } else {
+                caseMode = 'normal';
+                button.textContent = 'Aa';
+                button.classList.remove('active');
+            }
+            
+            // Перегенерируем текст с новым регистром
+            generateRainbowText();
+        }
+
+        // Инициализация при загрузке страницы
+        window.onload = function() {
+            document.getElementById('textInput').value = '';
+            generateRainbowText();
+            
+            // Устанавливаем начальный размер шрифта
+            document.getElementById('output').style.fontSize = currentFontSize + 'px';
+            document.getElementById('decreaseFont').textContent = `🔽 Уменьшить`;
+            document.getElementById('increaseFont').textContent = `🔼 Увеличить`;
+        };
+    </script>
+</body>
+</html>
